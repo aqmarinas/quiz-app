@@ -87,7 +87,7 @@ function Quiz() {
     <>
       <Layout>
         <div className="flex flex-col items-center justify-center mx-auto">
-          <h1 className="text-2xl text-slate-800 font-bold tracking-tight sm:text-6xl mb-8">Quiz App</h1>
+          <h1 className="text-3xl md:text-4xl text-slate-800 font-bold tracking-tight mb-8">Quiz App</h1>
 
           {finish && <Button onClick={startQuiz}>Start Quiz</Button>}
 

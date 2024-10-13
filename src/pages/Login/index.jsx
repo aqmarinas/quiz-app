@@ -5,6 +5,7 @@ import Input from "../../components/ui/Input";
 import Button from "../../components/ui/Button";
 import { login } from "../../services/api";
 import Layout from "@/components/layouts/Layout";
+import Alert from "../../components/ui/Alert";
 
 const Login = () => {
   const { setAuth } = useAuth();
@@ -17,28 +18,27 @@ const Login = () => {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [alert, setAlert] = useState({ type: "", message: "" });
 
   useEffect(() => {
     usernameRef.current.focus();
   }, []);
 
   useEffect(() => {
-    setErrorMessage("");
+    setAlert({ type: "", message: "" });
   }, [username, password]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     if (!username || !password) {
-      setErrorMessage("Please fill in all fields");
+      setAlert({ type: "warning", message: "Please enter username or password" });
       errorRef.current.focus();
       return;
     }
 
     try {
       const response = await login(username, password);
-      console.log({ response });
       const accessToken = response?.data?.accessToken;
 
       setAuth({ username, accessToken });
@@ -47,13 +47,13 @@ const Login = () => {
       navigate(from, { replace: true });
     } catch (err) {
       if (!err?.response) {
-        setErrorMessage("No server response");
+        setAlert({ type: "error", message: "No server response" });
       } else if (err.response?.status === 400) {
-        setErrorMessage("Missing username or password");
+        setAlert({ type: "error", message: "These credentials do not match our records" });
       } else if (err.response?.status === 401) {
-        setErrorMessage("Unauthorized");
+        setAlert({ type: "error", message: "Unauthorized" });
       } else {
-        setErrorMessage("Login failed");
+        setAlert({ type: "error", message: "Login failed" });
       }
       errorRef.current.focus();
     }
@@ -61,21 +61,20 @@ const Login = () => {
 
   return (
     <>
-      {/* !! ADD ALERT */}
       <Layout>
         <div>
-          <p
-            ref={errorRef}
-            className={errorMessage ? "errmsg" : "offscreen"}
-            aria-live="assertive"
-          >
-            {errorMessage}
-          </p>
-        </div>
-        <div>
           <h1 className="text-3xl text-center text-slate-800 font-bold tracking-tight mb-8">Login</h1>
+          {alert.message && (
+            <Alert
+              type={alert.type}
+              message={alert.message}
+            />
+          )}
         </div>
-        <form onSubmit={handleLogin}>
+        <form
+          onSubmit={handleLogin}
+          noValidate
+        >
           <Input
             label="Username"
             type="text"
@@ -84,7 +83,7 @@ const Login = () => {
             ref={usernameRef}
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            required
+            required={true}
             autocomplete="off"
           />
           <Input
@@ -93,8 +92,8 @@ const Login = () => {
             id="password"
             name="password"
             value={password}
+            required={true}
             onChange={(e) => setPassword(e.target.value)}
-            required
           />
           <div className="mt-2">
             <Button>Login</Button>
