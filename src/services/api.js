@@ -13,12 +13,11 @@ export const fetchQuestions = async () => {
     ))
 }  
 
-export const login = async (user, password) => {
-    const response = await axios.post('/login', JSON.stringify({user, password}), {
+export const login = async (username, password) => {
+    const response = await axios.post("https://dummyjson.com/auth/login", JSON.stringify({ username, password }), {
         headers: {
             'Content-Type': 'application/json',
         },
-        withCredentials: true,
     });
     return response.data;
 }

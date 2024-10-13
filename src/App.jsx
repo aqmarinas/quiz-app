@@ -3,6 +3,7 @@ import NotFound from "./pages/NotFound";
 import Quiz from "./pages/Quiz";
 import Login from "./pages/Login";
 import Result from "./pages/Result";
+import RequireAuth from "./components/auth/RequireAuth";
 // import Layout from "./components/layouts/Layout";
 // import Layout from "./components/layouts/Layout";
 
@@ -15,18 +16,21 @@ function App() {
           element={<NotFound />}
         />
         <Route
-          path="/"
-          // element={<Layout />}
-          element={<Quiz />}
-        />
-        <Route
           path="/login"
           element={<Login />}
         />
-        <Route
-          path="/result"
-          element={<Result />}
-        />
+
+        {/* Protected Routes */}
+        <Route element={<RequireAuth />}>
+          <Route
+            path="/"
+            element={<Quiz />}
+          />
+          <Route
+            path="/result"
+            element={<Result />}
+          />
+        </Route>
       </Routes>
     </BrowserRouter>
   );
